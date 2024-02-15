@@ -20,4 +20,7 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
+
+public:
+	FORCEINLINE TObjectPtr<USkeletalMeshComponent> GetWeapon() const { return Weapon; }
 };
