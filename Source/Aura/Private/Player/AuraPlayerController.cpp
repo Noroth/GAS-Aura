@@ -24,10 +24,12 @@ void AAuraPlayerController::BeginPlay()
 	Super::BeginPlay();
 	check(AuraContext);
 
-	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
-		GetLocalPlayer());
-	check(Subsystem);
-	Subsystem->AddMappingContext(AuraContext, 0);
+
+	if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
+		ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	{
+		Subsystem->AddMappingContext(AuraContext, 0);
+	}
 
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Default;
@@ -90,7 +92,7 @@ void AAuraPlayerController::CursorTrace()
 	// TODO check if those bools can replace the if - else
 	bool bShouldHighlight = ThisActor != nullptr && LastActor != ThisActor;
 	bool bShouldUnhighlight = (LastActor && ThisActor) && LastActor != ThisActor;
-	
+
 	if (LastActor == nullptr)
 	{
 		if (ThisActor != nullptr)
