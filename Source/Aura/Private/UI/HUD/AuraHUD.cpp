@@ -11,6 +11,7 @@ UOverlayWidgetController* AAuraHUD::GetOverlayWidgetController(const FWidgetCont
 	{
 		OverlayWidgetController = NewObject<UOverlayWidgetController>(this, OverlayWidgetControllerClass);
 		OverlayWidgetController->SetWidgetControllerParams(WCParams);
+		OverlayWidgetController->BindCallbacksToDependencies();
 	}
 
 	return OverlayWidgetController;
@@ -25,9 +26,15 @@ void AAuraHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySyst
 
 	const FWidgetControllerParams WidgetControllerParams(PC, PS, ASC, AS);
 	UOverlayWidgetController* WidgetController = GetOverlayWidgetController(WidgetControllerParams);
-	
+
+	// Set the widget controller for the overlay.
+	// The overlay then has access to the widget controller and can set the controller for the sub widgets
+	// Which inherit from AuraUserWidget.
 	OverlayWidget->SetWidgetController(WidgetController);
+	
 	WidgetController->BroadcastInitialValues();
+
+	// Display the HUD
 	OverlayWidget->AddToViewport();
 }
 
