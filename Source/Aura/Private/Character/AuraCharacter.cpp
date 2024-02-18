@@ -55,7 +55,7 @@ void AAuraCharacter::InitHUD() const
 	if (!PlayerController) return;
 	
 	AAuraHUD* AuraHUD = PlayerController->GetHUD<AAuraHUD>();
-	checkf(AuraHUD, TEXT("Could not cast to AuraHUD. Check if is correctly set in the BP_Game."))
+	if (!AuraHUD) return;
 
 	AuraHUD->InitOverlay(PlayerController, GetPlayerState<AAuraPlayerState>(), AbilitySystemComponent, AttributeSet);
 }
