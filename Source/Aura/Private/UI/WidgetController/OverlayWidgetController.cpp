@@ -1,12 +1,14 @@
 // Copyright Noroth
 
 #include "UI/WidgetController/OverlayWidgetController.h"
+
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 
 void UOverlayWidgetController::BroadcastInitialValues()
 {
 	const UAuraAttributeSet* AuraAttributes = CastChecked<UAuraAttributeSet>(AttributeSet);
-	
+
 	OnHealthChanged.Broadcast(AuraAttributes->GetHealth());
 	OnMaxHealthChanged.Broadcast(AuraAttributes->GetMaxHealth());
 
@@ -20,7 +22,7 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 		AuraAttributes->GetHealthAttribute()).AddUObject(this, &UOverlayWidgetController::HealthChanged);
-	
+
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 		AuraAttributes->GetMaxHealthAttribute()).AddUObject(this, &UOverlayWidgetController::MaxHealthChanged);
 
@@ -29,6 +31,20 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 		AuraAttributes->GetMaxManaAttribute()).AddUObject(this, &UOverlayWidgetController::MaxManaChanged);
+
+	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->EffectAssetTags.AddLambda(
+		[this](const FGameplayTagContainer& AssetTags)
+		{
+			for (auto& Tag : AssetTags)
+			{
+				const FString Msg = FString::Printf(TEXT("GE Tag Name: %s"), *Tag.ToString());
+				GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Blue, Msg);
+
+				FUIWidgetRow* Row = GetDataTableRowByTag<FUIWidgetRow>(MessageWidgetDataTable, Tag);
+				
+			}
+		}
+	);
 }
 
 void UOverlayWidgetController::HealthChanged(const FOnAttributeChangeData& Data) const
