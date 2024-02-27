@@ -37,18 +37,27 @@ void AAuraCharacter::OnRep_PlayerState()
 	InitAbilityActorInfo();
 }
 
+int32 AAuraCharacter::GetPlayerLevel()
+{
+	const AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	check(AuraPlayerState)
+
+	return AuraPlayerState->GetPlayerLevel();
+}
+
 void AAuraCharacter::InitAbilityActorInfo()
 {
 	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
 	check(AuraPlayerState);
-	
+
 	AbilitySystemComponent = AuraPlayerState->GetAbilitySystemComponent();
 	AbilitySystemComponent->InitAbilityActorInfo(AuraPlayerState, this);
 	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 
 	AttributeSet = AuraPlayerState->GetAttributeSet();
-	
+
 	InitHUD();
+	InitializeDefaultAttributes();
 }
 
 void AAuraCharacter::InitHUD() const
@@ -56,10 +65,9 @@ void AAuraCharacter::InitHUD() const
 	APlayerController* PlayerController = GetController<APlayerController>();
 	// We don't have a player controller on a server. Only on Clients with locally controlled Pawns.
 	if (!PlayerController) return;
-	
+
 	AAuraHUD* AuraHUD = PlayerController->GetHUD<AAuraHUD>();
 	if (!AuraHUD) return;
 
 	AuraHUD->InitOverlay(PlayerController, GetPlayerState<AAuraPlayerState>(), AbilitySystemComponent, AttributeSet);
 }
-
